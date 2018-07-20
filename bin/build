@@ -15,7 +15,7 @@ versionCheck() {
 
 buildContainer() {
     cd $DIR/..
-    docker build -t nona-s3-pull .
+    docker build -t nona-scheduler .
 }
 
 versionCheck
