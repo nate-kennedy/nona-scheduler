@@ -3,8 +3,6 @@ import boto3
 import sys
 import os
 import time
-import requests
-import json
 import datetime
 from subprocess import call
 
