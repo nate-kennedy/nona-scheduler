@@ -1,0 +1,32 @@
+#! /bin/bash
+
+# Build Vars
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+VERSION=$(cat $DIR/../version)
+
+# Build Script
+deployImage() {
+    eval $(aws ecr get-login --no-include-email --region us-east-1)
+
+    docker tag nona-scheduler:latest \
+        ${AWS_ACCOUNT_NUM}.dkr.ecr.us-east-1.amazonaws.com/nona-scheduler:latest
+    docker tag nona-scheduler:latest \
+        ${AWS_ACCOUNT_NUM}.dkr.ecr.us-east-1.amazonaws.com/nona-scheduler:${VERSION}
+    
+    docker push ${AWS_ACCOUNT_NUM}.dkr.ecr.us-east-1.amazonaws.com/nona-scheduler:latest
+    docker push ${AWS_ACCOUNT_NUM}.dkr.ecr.us-east-1.amazonaws.com/nona-scheduler:${VERSION}
+}
+
+tagGit() {
+  git config --local user.name "travis"
+  git config --local user.email "travis"
+  git tag -a "${VERSION}" -m "version: ${VERSION}"
+}
+
+createArtifact() {
+    docker save nona-scheduler -o nona-scheduler.tar
+}
+
+deployImage
+tagGit
+createArtifact
