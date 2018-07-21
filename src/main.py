@@ -13,7 +13,7 @@ R53_RECORD_SET_NAME = os.environ.get('R53_RECORD_SET_NAME')
 R53_HOSTED_ZONE_ID = os.environ.get('R53_HOSTED_ZONE_ID')
 
 ### Optional. Only change if doing something non-standard ###
-MC_SERVER_ADDRESS = os.environ.get('MC_SERVER_ADDRESS', 'localhost')
+MC_SERVER_ADDRESS = os.environ.get('MC_SERVER_ADDRESS', R53_RECORD_SET_NAME)
 MC_SERVER_RCON_PORT = os.environ.get('MC_SERVER_RCON_PORT', '25565')
 ECS_CLUSTER_NAME = os.environ.get('ECS_CLUSTER_NAME', 'ecs-minecraft')
 PULL_TASK_NAME = os.environ.get('PULL_TASK_NAME', 's3-pull')
