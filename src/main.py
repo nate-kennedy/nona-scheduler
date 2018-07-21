@@ -113,7 +113,7 @@ def create_record_set():
     client = boto3.client('route53')
     public_ip = get_cluster_instance_public_ip()
     response = client.change_resource_record_sets(
-        HostedZoneId=R53_RECORD_SET_NAME,
+        HostedZoneId=R53_HOSTED_ZONE_ID,
         ChangeBatch={
             'Changes': [
                 {
@@ -138,7 +138,7 @@ def delete_record_set():
     client = boto3.client('route53')
     public_ip = get_cluster_instance_public_ip()
     response = client.change_resource_record_sets(
-        HostedZoneId=R53_RECORD_SET_NAME,
+        HostedZoneId=R53_HOSTED_ZONE_ID,
         ChangeBatch={
             'Changes': [
                 {
