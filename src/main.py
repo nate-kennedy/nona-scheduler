@@ -3,6 +3,7 @@ import boto3
 import sys
 import os
 import time
+import socket
 import datetime
 from subprocess import call
 
@@ -22,6 +23,19 @@ MS_SERVER_TASK_NAME = os.environ.get('MS_SERVER_TASK_NAME', 'mc-server')
 def log(line):
     i = datetime.datetime.now()
     print("[{}] {}".format(i.isoformat(), line))
+
+def wait_wait_for_server():
+    while True:
+        try:
+            server = MinecraftServer.lookup(
+                "{}:{}".format(MC_SERVER_ADDRESS, MC_SERVER_RCON_PORT)
+            )
+            status = server.status()
+            status.players.online
+        except:
+            time.sleep(1)
+            continue
+        return
 
 def player_watch_loop():
     ticks = 0
@@ -165,6 +179,7 @@ if __name__ == "__main__":
     pull_task_arn = run_task(PULL_TASK_NAME)
     wait_for_task(pull_task_arn)
     mc_task_arn = run_task(MS_SERVER_TASK_NAME)
+    wait_wait_for_server()
     player_watch_loop()
     stop_task(mc_task_arn)
     wait_for_task(mc_task_arn)
