@@ -57,6 +57,7 @@ def wait_for_desired_capacity(count):
                 ECS_CLUSTER_NAME,
             ]
         )
+        log("DEBUG: {}".format(response))
         current_count = response['clusters'][0]['registeredContainerInstancesCount']
         log("The cluster currently has '{}' registered instances".format(current_count))
         if current_count == count:
