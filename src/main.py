@@ -14,33 +14,38 @@ ECS_CLUSTER = os.environ.get('ECS_CLUSTER')
 
 ### Optional. Only change if doing something non-standard ###
 MC_SERVER_ADDRESS = os.environ.get('MC_SERVER_ADDRESS', R53_RECORD_SET_NAME)
-MC_SERVER_RCON_PORT = os.environ.get('MC_SERVER_RCON_PORT', '25565')
+MC_SERVER_RCON_PORT = os.environ.get('MC_SERVER_RCON_PORT', 25565)
 ECS_CLUSTER_NAME = ECS_CLUSTER
 PULL_TASK_NAME = os.environ.get('PULL_TASK_NAME', 's3-pull')
 PUSH_TASK_NAME = os.environ.get('PUSH_TASK_NAME', 's3-push')
 MS_SERVER_TASK_NAME = os.environ.get('MS_SERVER_TASK_NAME', 'mc-server')
-TICK_MAX = os.environ.get('MS_SERVER_TASK_NAME', 60)
+TICK_MAX = int(os.environ.get('TICK_MAX', 60))
 
 def log(line):
     i = datetime.datetime.now()
     print("[{}] {}".format(i.isoformat(), line))
 
-def get_mc_server_status():
-    return MineStat(MC_SERVER_ADDRESS, MC_SERVER_RCON_PORT)
-
 def wait_wait_for_server():
     while True:
-        server = get_mc_server_status()
-        if server.online:
+        status = MineStat(MC_SERVER_ADDRESS, MC_SERVER_RCON_PORT)
+        if status.online:
             return
+        log("Server '{}' has online state of '{}'".format(
+            MC_SERVER_ADDRESS, 
+            status.online
+        ))
         time.sleep(1)
 
 def player_watch_loop():
     ticks = 0
     while True:
-        server = get_mc_server_status()
+        server = MineStat(MC_SERVER_ADDRESS, MC_SERVER_RCON_PORT)
         player_count = server.current_players
-        log("Player Count: {}".format(player_count))
+        log("Player Count: {}. Tick '{}' of '{}'".format(
+            player_count,
+            ticks,
+            TICK_MAX
+        ))
         if player_count < 1:
             ticks += 1
         else:
