@@ -25,9 +25,28 @@ def log(line):
     i = datetime.datetime.now()
     print("[{}] {}".format(i.isoformat(), line))
 
+
+def port_is_listening(ip, port):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(1)
+        success = None
+        try:
+                s.connect((ip, int(port)))
+                s.shutdown(socket.SHUT_RDWR)
+                success = True
+        except:
+                success = False
+        finally:
+                s.close()
+        
+        return success
+
 def wait_wait_for_server():
     while True:
         try:
+            if not port_is_listening(MC_SERVER_ADDRESS, MC_SERVER_RCON_PORT):
+                time.sleep(1)
+                continue
             server = MinecraftServer.lookup(
                 "{}:{}".format(MC_SERVER_ADDRESS, MC_SERVER_RCON_PORT)
             )
