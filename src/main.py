@@ -1,4 +1,4 @@
-from .minestat import MineStat
+from minestat import MineStat
 import boto3
 import sys
 import os
