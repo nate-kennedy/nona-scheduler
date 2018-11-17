@@ -34,7 +34,7 @@ def wait_wait_for_server():
             MC_SERVER_ADDRESS, 
             status.online
         ))
-        time.sleep(1)
+        time.sleep(5)
 
 def player_watch_loop():
     ticks = 0
@@ -46,7 +46,7 @@ def player_watch_loop():
             ticks,
             TICK_MAX
         ))
-        if player_count < 1:
+        if player_count:
             ticks += 1
         else:
             ticks = 0
