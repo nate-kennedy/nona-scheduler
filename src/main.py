@@ -1,4 +1,4 @@
-from mcstatus import MinecraftServer
+from .minestat import MineStat
 import boto3
 import sys
 import os
@@ -25,53 +25,28 @@ def log(line):
     i = datetime.datetime.now()
     print("[{}] {}".format(i.isoformat(), line))
 
-
-def port_is_listening(ip, port):
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(1)
-        success = None
-        try:
-                s.connect((ip, int(port)))
-                s.shutdown(socket.SHUT_RDWR)
-                success = True
-        except:
-                success = False
-        finally:
-                s.close()
-        
-        return success
+def get_mc_server_status():
+    return MineStat(MC_SERVER_ADDRESS, MC_SERVER_RCON_PORT)
 
 def wait_wait_for_server():
     while True:
-        try:
-            if not port_is_listening(MC_SERVER_ADDRESS, MC_SERVER_RCON_PORT):
-                time.sleep(1)
-                continue
-            server = MinecraftServer.lookup(
-                "{}:{}".format(MC_SERVER_ADDRESS, MC_SERVER_RCON_PORT)
-            )
-            status = server.status()
-            status.players.online
-        except:
-            time.sleep(1)
-            continue
-        return
+        server = get_mc_server_status()
+        if server.online:
+            return
+        time.sleep(1)
 
 def player_watch_loop():
     ticks = 0
-    server = MinecraftServer.lookup(
-        "{}:{}".format(MC_SERVER_ADDRESS, MC_SERVER_RCON_PORT)
-    )
     while True:
-        status = server.status()
-        player_count = status.players.online
+        server = get_mc_server_status()
+        player_count = server.current_players
         log("Player Count: {}".format(player_count))
         if player_count < 1:
             ticks += 1
         else:
             ticks = 0
         if ticks > TICK_MAX:
-            log("Player count has been 0 for 60 consecutive ticks.")
+            log("Player count has been 0 for {} consecutive ticks.".format(TICK_MAX))
             return
         time.sleep(10)
 
