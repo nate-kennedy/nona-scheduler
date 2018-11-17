@@ -7,7 +7,7 @@ VERSION=$(cat $DIR/../version)
 
 # Build Script
 versionCheck() {
-    if git rev-parse ${VERSION} >/dev/null 2>&1 && [[ $CURRENT_BRANCH == master ]]; then
+    if git rev-parse ${VERSION} >/dev/null 2>&1; then
         echo "Found tag"
         exit 1
     fi
