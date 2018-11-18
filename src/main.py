@@ -46,7 +46,7 @@ def player_watch_loop():
             ticks,
             TICK_MAX
         ))
-        if player_count:
+        if not player_count:
             ticks += 1
         else:
             ticks = 0
